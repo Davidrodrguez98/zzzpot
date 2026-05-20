@@ -1,5 +1,7 @@
 package com.dacar.zzzpot.models;
 
+import java.util.UUID;
+
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -15,7 +17,7 @@ import lombok.Setter;
 public class Property {
 	@Id
 	@GeneratedValue(strategy = GenerationType.UUID)
-	private String id;
+	private UUID id;
 
 	private String title;
 	private String description;
