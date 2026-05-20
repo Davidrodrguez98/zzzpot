@@ -1,0 +1,35 @@
+services:
+  postgres:
+    container_name: postgres
+    image: postgres
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - PGDATA=/data/postgres
+    volumes:
+      - postgres_data:/data/postgres
+    ports:
+      - "5332:5432"
+    networks:
+      - postgres_data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d postgres"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    command: /bin/bash -c "until pg_isready -U ${POSTGRES_USER} -p 5432; do sleep 1; done; psql -U ${POSTGRES_USER} -c 'CREATE DATABASE ${POSTGRES_DB};'"
+
+  redis:
+    image: redis:latest
+    container_name: zzzpot-redis
+
+    ports:
+      - "6379:6379"
+
+networks:
+  postgres_data:
+    driver: bridge
+
+volumes:
+  postgres_data:
