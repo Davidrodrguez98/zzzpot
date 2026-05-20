@@ -1,4 +1,16 @@
 services:
+  zzzpot:
+    container_name: zzzpot
+    build: .
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - postgres_data
+    restart: unless-stopped
+
   postgres:
     container_name: postgres
     image: postgres
