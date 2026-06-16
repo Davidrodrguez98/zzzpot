@@ -1,12 +1,10 @@
 # Dockerfile for the zzzpot app
-FROM node:18-alpine
+FROM eclipse-temurin:21-jdk
 
 WORKDIR /app
 
-COPY package*.json ./
-RUN npm install
+COPY target/zzzpot.jar app.jar
 
-COPY . .
+EXPOSE 8080
 
-EXPOSE 3000
-CMD ["npm", "start"]
+ENTRYPOINT ["java", "-jar", "app.jar"]

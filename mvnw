@@ -107,6 +107,33 @@ trim() {
 
 scriptDir="$(dirname "$0")"
 scriptName="$(basename "$0")"
+ensure_java_21_plus_on_macos() {
+  [ "$(uname)" = "Darwin" ] || return 0
+  [ -x "/usr/libexec/java_home" ] || return 0
+
+  current_java_cmd=""
+  if [ -n "${JAVA_HOME-}" ] && [ -x "$JAVA_HOME/bin/java" ]; then
+    current_java_cmd="$JAVA_HOME/bin/java"
+  elif command -v java >/dev/null 2>&1; then
+    current_java_cmd="$(command -v java)"
+  else
+    return 0
+  fi
+
+  current_java_version="$("$current_java_cmd" -version 2>&1 | awk -F[\".] '/version/ { if ($2 == 1) print $3; else print $2; exit }')"
+  case "$current_java_version" in
+  '' | *[!0-9]*) return 0 ;;
+  esac
+
+  if [ "$current_java_version" -lt 21 ]; then
+    java_home_21_plus="$(/usr/libexec/java_home -v 21+ 2>/dev/null || :)"
+    [ -n "${java_home_21_plus-}" ] || return 0
+    JAVA_HOME="$java_home_21_plus"
+    verbose "JAVA_HOME was updated to Java 21+ for this build: $JAVA_HOME"
+  fi
+}
+
+ensure_java_21_plus_on_macos
 
 # parse distributionUrl and optional distributionSha256Sum, requires .mvn/wrapper/maven-wrapper.properties
 while IFS="=" read -r key value; do

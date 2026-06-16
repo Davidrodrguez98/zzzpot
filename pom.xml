@@ -97,6 +97,7 @@
 	</dependencies>
 
 	<build>
+		<finalName>zzzpot</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
